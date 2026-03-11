@@ -13,9 +13,10 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBPort     string
+	JWTToken   string
 }
 
-func LoadConfig() (*Config, error){
+func LoadConfig() (*Config, error) {
 	err := godotenv.Load()
 	if err != nil {
 		return nil, err
@@ -29,11 +30,12 @@ func LoadConfig() (*Config, error){
 		dbHost = "localhost"
 	}
 	return &Config{
-		Port: port,
-		DBHost: dbHost,
-		DBUser: os.Getenv("DB_USER"),
+		Port:       port,
+		DBHost:     dbHost,
+		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName: os.Getenv("DB_NAME"),
-		DBPort: os.Getenv("DB_PORT"),
+		DBName:     os.Getenv("DB_NAME"),
+		DBPort:     os.Getenv("DB_PORT"),
+		JWTToken:   os.Getenv("JWT_TOKEN"),
 	}, nil
 }

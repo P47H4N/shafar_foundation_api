@@ -3,10 +3,10 @@ package users
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/P47H4N/shafar_foundation_api/internals/helpers"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func InitUserCotroller(userService *UserServices) *UserControllers {
@@ -14,12 +14,11 @@ func InitUserCotroller(userService *UserServices) *UserControllers {
 }
 
 func (uc *UserControllers) GetUsers(c *gin.Context) {
-	var users []Users
-	query := uc.service.db.Find(&users)
-	if query.Error != nil {
+	users, err := uc.service.GetUsers()
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, helpers.APIResponse{
 			Status:  "failed",
-			Message: "Internal Error.",
+			Message: err.Error(),
 		})
 		return
 	}
@@ -31,20 +30,20 @@ func (uc *UserControllers) GetUsers(c *gin.Context) {
 }
 
 func (uc *UserControllers) GetUserById(c *gin.Context) {
-	id := c.Param("id")
-	var user Users
-	query := uc.service.db.First(&user, id)
-	if query.Error != nil {
-		if query.Error == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusInternalServerError, helpers.APIResponse{
-				Status:  "failed",
-				Message: "Invalid ID.",
-			})
-			return
-		}
+	paramId := c.Param("id")
+	id, err := strconv.Atoi(paramId)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, helpers.APIResponse{
 			Status:  "failed",
-			Message: "Internal Error.",
+			Message: "Invalid User ID.",
+		})
+		return
+	}
+	user, err := uc.service.GetUserById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, helpers.APIResponse{
+			Status:  "failed",
+			Message: err.Error(),
 		})
 		return
 	}
@@ -53,3 +52,4 @@ func (uc *UserControllers) GetUserById(c *gin.Context) {
 		Data:   user,
 	})
 }
+

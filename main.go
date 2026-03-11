@@ -5,8 +5,9 @@ import (
 
 	"github.com/P47H4N/shafar_foundation_api/cmd"
 	"github.com/P47H4N/shafar_foundation_api/internals/database"
-	"github.com/gin-gonic/gin"
+	"github.com/P47H4N/shafar_foundation_api/internals/helpers"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 		log.Fatalln("Unable to load config.")
 		return
 	}
+	helpers.LoadJWT(cnf.JWTToken)
 	db, err := database.InitDB(cnf)
 	if err != nil {
 		log.Fatalln("Database Connection Failed.", err)
