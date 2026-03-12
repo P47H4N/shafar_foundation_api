@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/P47H4N/shafar_foundation_api/internals/api/auth"
+	"github.com/P47H4N/shafar_foundation_api/internals/api/donations"
 	"github.com/P47H4N/shafar_foundation_api/internals/api/projects"
 	"github.com/P47H4N/shafar_foundation_api/internals/api/users"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,10 @@ func Start(router *gin.Engine, db *gorm.DB) error {
 	projectController := projects.InitProjectControllers(projectService)
 	projects.ProjectRoutes(router, projectController)
 
+	// Donations
+	donationService := donations.InitDonationService(db)
+	donationController := donations.InitDonationController(donationService)
+	donations.DonationRoutes(router, donationController)
 
 	return nil
 }

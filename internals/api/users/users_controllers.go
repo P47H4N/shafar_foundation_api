@@ -30,20 +30,26 @@ func (uc *UserControllers) GetUsers(c *gin.Context) {
 }
 
 func (uc *UserControllers) GetUserById(c *gin.Context) {
-	paramId := c.Param("id")
+	paramId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, helpers.APIResponse{
+			Status: "failed",
+			Message: "Invalid donation id.",
+		})
+		return
+	}
 	getUserId, _ := c.Get("userId")
 	getUserRole, _ := c.Get("userRole")
-	userId := getUserId.(string)
+	userId := getUserId.(uint)
 	userRole := getUserRole.(string)
-	uintID, err := strconv.ParseUint(userId, 10, 32)
-	if userId != paramId && userRole != "admin" {
+	if userId != uint(paramId) && userRole != "admin" {
 		c.JSON(http.StatusUnauthorized, helpers.APIResponse{
 			Status:  "failed",
 			Message: "Unauthorized.",
 		})
 		return
 	}
-	user, err := uc.service.GetUserById(uint(uintID))
+	user, err := uc.service.GetUserById(uint(userId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, helpers.APIResponse{
 			Status:  "failed",
