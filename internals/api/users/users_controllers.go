@@ -34,7 +34,7 @@ func (uc *UserControllers) GetUserById(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, helpers.APIResponse{
 			Status: "failed",
-			Message: "Invalid donation id.",
+			Message: "Invalid user id.",
 		})
 		return
 	}
